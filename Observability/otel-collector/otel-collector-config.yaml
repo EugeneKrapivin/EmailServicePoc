@@ -1,0 +1,60 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8890"
+    resource_to_telemetry_conversion:
+      enabled: true
+    send_timestamps: true
+    add_metric_suffixes: true
+    
+  otlp:
+    endpoint: tracing:4317
+    tls:
+      insecure: true
+  loki:
+    endpoint: http://logging:3100/loki/api/v1/push
+    default_labels_enabled:
+      exporter: false
+      job: true
+  debug:
+      
+
+processors:
+  batch:
+  transform:
+    metric_statements:
+      - context: datapoint
+        statements:
+        - set(attributes["job"], attributes["exported_job"])
+        - set(attributes["instance"], attributes["exported_instance"])
+
+extensions:
+  health_check:
+  pprof:
+    endpoint: :1888
+  zpages:
+    endpoint: :55679
+
+
+service:
+  extensions: [pprof, zpages, health_check]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [transform, batch]
+      exporters: [debug, prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, loki]

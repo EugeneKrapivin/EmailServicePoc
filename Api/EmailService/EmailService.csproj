@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UserSecretsId>689edab3-c785-442b-991a-0bacda24a192</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..</DockerfileContext>
+		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!--<PackageReference Include="Aspire.Azure.Data.Tables" />-->
+		<PackageReference Include="KafkaFlow" />
+		<PackageReference Include="KafkaFlow.Serializer.JsonCore" />
+		<PackageReference Include="KafkaFlow.LogHandler.Microsoft" />
+		<PackageReference Include="KafkaFlow.Microsoft.DependencyInjection" />
+		<PackageReference Include="KafkaFlow.OpenTelemetry" />
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Microsoft.Orleans.Client" />
+		<PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" />
+		<PackageReference Include="Microsoft.Orleans.Clustering.Redis" />
+		<PackageReference Include="Microsoft.Orleans.Serialization.SystemTextJson" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+		<PackageReference Include="Swashbuckle.AspNetCore" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Aspire\EmailServicePoc.ServiceDefaults\EmailServicePoc.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\Common\EmailService.Models\EmailService.Models.csproj" />
+		<ProjectReference Include="..\..\Processor\Processor.Grains.Interfaces\Processor.Grains.Interfaces.csproj" />
+	</ItemGroup>
+
+</Project>

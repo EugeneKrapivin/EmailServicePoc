@@ -1,0 +1,86 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34407.89
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Processor", "Processor", "{55C807EA-9B82-48C8-9A2B-60A176D25901}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{AB619B99-671C-4CFD-823D-618418223221}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{C5BB5068-36F3-4DFF-9A0B-E168D915CEC1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService", "Api\EmailService\EmailService.csproj", "{C1EE3788-00E2-442A-9E95-49BC4AAD5397}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processor.Host", "Processor\Processor.Host\Processor.Host.csproj", "{5796ACAD-7E00-40AF-8A91-BB3B6F893A67}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processor.Grains.Interfaces", "Processor\Processor.Grains.Interfaces\Processor.Grains.Interfaces.csproj", "{C1C480E7-EE4C-412A-9631-DCC280C8C37C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailService.Models", "Common\EmailService.Models\EmailService.Models.csproj", "{D962BB60-F43D-4D0D-9F27-9507145A4882}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Processor.Grains", "Processor\Processor.Grains\Processor.Grains.csproj", "{C582280E-78B2-4A87-A3FA-455E8EE7C270}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B0BFC96-C5D2-482D-8623-6675C079A82A}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+		LICENSE.txt = LICENSE.txt
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{2F99C479-0FB5-4248-81A6-C2CCD0397765}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailServicePoc.ServiceDefaults", "Aspire\EmailServicePoc.ServiceDefaults\EmailServicePoc.ServiceDefaults.csproj", "{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C1EE3788-00E2-442A-9E95-49BC4AAD5397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1EE3788-00E2-442A-9E95-49BC4AAD5397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1EE3788-00E2-442A-9E95-49BC4AAD5397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1EE3788-00E2-442A-9E95-49BC4AAD5397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5796ACAD-7E00-40AF-8A91-BB3B6F893A67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5796ACAD-7E00-40AF-8A91-BB3B6F893A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5796ACAD-7E00-40AF-8A91-BB3B6F893A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5796ACAD-7E00-40AF-8A91-BB3B6F893A67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1C480E7-EE4C-412A-9631-DCC280C8C37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1C480E7-EE4C-412A-9631-DCC280C8C37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1C480E7-EE4C-412A-9631-DCC280C8C37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1C480E7-EE4C-412A-9631-DCC280C8C37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D962BB60-F43D-4D0D-9F27-9507145A4882}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D962BB60-F43D-4D0D-9F27-9507145A4882}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D962BB60-F43D-4D0D-9F27-9507145A4882}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D962BB60-F43D-4D0D-9F27-9507145A4882}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C582280E-78B2-4A87-A3FA-455E8EE7C270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C582280E-78B2-4A87-A3FA-455E8EE7C270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C582280E-78B2-4A87-A3FA-455E8EE7C270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C582280E-78B2-4A87-A3FA-455E8EE7C270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F99C479-0FB5-4248-81A6-C2CCD0397765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F99C479-0FB5-4248-81A6-C2CCD0397765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F99C479-0FB5-4248-81A6-C2CCD0397765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F99C479-0FB5-4248-81A6-C2CCD0397765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C1EE3788-00E2-442A-9E95-49BC4AAD5397} = {C5BB5068-36F3-4DFF-9A0B-E168D915CEC1}
+		{5796ACAD-7E00-40AF-8A91-BB3B6F893A67} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
+		{C1C480E7-EE4C-412A-9631-DCC280C8C37C} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
+		{D962BB60-F43D-4D0D-9F27-9507145A4882} = {AB619B99-671C-4CFD-823D-618418223221}
+		{C582280E-78B2-4A87-A3FA-455E8EE7C270} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {106683E3-F719-41C1-8C23-328FB8677D70}
+	EndGlobalSection
+EndGlobal

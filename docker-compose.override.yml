@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  emailservice:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - REDIS_URL=redis
+      - REDIS_POST=6379
+      - KFK_BS=broker
+      - KFK_PLAIN=9092
+      - KFK_SSL=9101
+      - JAEGER=tracer
+    ports:
+      - "8080"
+      - "8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - processor.host
+  processor.host:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - REDIS_URL=redis
+      - REDIS_POST=6379
+      - KFK_BS=broker
+      - KFK_PLAIN=9092
+      - KFK_SSL=9101
+      - JAEGER=tracer
+    ports:
+      - "8080"
+      - "8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

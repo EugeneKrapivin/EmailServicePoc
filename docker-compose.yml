@@ -1,0 +1,63 @@
+version: '3.4'
+
+services:
+  emailservice:
+    image: ${DOCKER_REGISTRY-}emailservice
+    build:
+      context: .
+      dockerfile: Api/EmailService/Dockerfile
+    ports:
+      - "8080"
+      - "8081"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:5317
+      - OTEL_SERVICE_NAME=EmailService_API
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
+    networks:
+      cp-all-in-one_default:
+      default:
+        aliases:
+          - email-service-api
+      monitoring:
+
+  processor.host:
+    image: ${DOCKER_REGISTRY-}processorhost
+    build:
+      context: .
+      dockerfile: Processor/Processor.Host/Dockerfile
+    ports:
+      - "8080"
+      - "8081"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:5317
+      - OTEL_SERVICE_NAME=EmailService_Host
+      - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
+    networks:
+      default:
+        aliases:
+          - email-service-processor
+      cp-all-in-one_default:
+      mailpit_default:
+      monitoring:
+
+  # otel-collector:
+  #   image: otel/opentelemetry-collector-contrib:latest
+  #   container_name: email_service-otel-collector
+  #   restart: always
+  #   command: ["--config=/etc/otel-collector-config.yaml"]
+  #   volumes:
+  #     - ./Observability/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+  #   networks:
+  #     - monitoring
+  #     - poc
+
+networks:
+  cp-all-in-one_default:
+    name: cp-all-in-one_default
+    external: true
+  mailpit_default:
+    name: mailpit_default
+    external: true  
+  monitoring:
+    name: monitoring
+    external: true  
