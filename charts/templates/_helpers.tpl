@@ -13,3 +13,12 @@
 {{- fail "ingress.annotations.sslCertificate is a required value" -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "email-processor.labels" -}}
+app.kubernetes.io/name: {{ include "email-processor.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
+app.kubernetes.io/component: {{ .Values.component | default "email-processor" }}
+app.kubernetes.io/part-of: {{ .Values.partOf | default "email-processor" }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}

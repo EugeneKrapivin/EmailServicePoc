@@ -1,11 +1,16 @@
+{{- if .Values.kafka.clusterName -}}
 {{- range .Values.topics }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
   name: {{ .name }}
   labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
     strimzi.io/cluster: {{ $.Values.kafka.clusterName }}
 spec:
   partitions: {{ .partitions }}
   replicas: {{ .replicas }}
 {{- end }}
+{{- else -}}
+{{- fail "kafka.clusterName is a required value" -}}
+{{- end -}}

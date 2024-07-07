@@ -4,6 +4,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emailservice
+  labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.emailServiceApi.replicaCount }}
   selector:
@@ -13,6 +15,7 @@ spec:
     metadata:
       labels:
         app: emailservice
+        {{- include "email-processor.labels" . | nindent 8 }}
     spec:
       containers:
         - name: emailservice

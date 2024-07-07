@@ -4,6 +4,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: processorhost
+  labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.processorService.replicaCount }}
   selector:
@@ -13,6 +15,7 @@ spec:
     metadata:
       labels:
         app: processorhost
+        {{- include "email-processor.labels" . | nindent 8 }}
     spec:
       containers:
         - name: processorhost

@@ -2,6 +2,8 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: {{ .Values.kafka.clusterName }}  # Use the configurable cluster name
+  labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
 spec:
   kafka:
     version: {{ .Values.kafka.version }}

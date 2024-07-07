@@ -4,6 +4,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: emailservice-ingress
+  labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
   annotations:
     haproxy.org/server-ssl: 'true'
     haproxy.org/ssl-certificate: {{ .Values.ingress.annotations.sslCertificate }}
@@ -37,4 +39,4 @@ spec:
         - {{ index .Values.ingress.hosts 0 }}
         - {{ index .Values.ingress.hosts 1 }}
       secretName: {{ .Values.ingress.annotations.sslCertificate }}
-{{- end -}}
+{{- end }}
