@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: emailservice
-          image: "{{ .Values.emailServiceApi.repository }}:{{ .Values.emailServiceApi.tag }}"
+          image: "{{ .Values.emailServiceApi.repository }}/{{ .Values.emailServiceApi.image }}:{{ .Values.emailServiceApi.tag }}"
           ports:
             - containerPort: 80
             - containerPort: 443

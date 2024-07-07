@@ -1,3 +1,4 @@
+{{- if .Values.ingress.enabled -}}
 {{- include "required-ssl-cert" . -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -11,7 +12,7 @@ metadata:
     kubernetes.io/ingress.class: haproxy
 spec:
   rules:
-    - host: {{ .Values.ingress.hosts[0] }}
+    - host: {{ index .Values.ingress.hosts 0 }}
       http:
         paths:
           - path: /
@@ -21,7 +22,7 @@ spec:
                 name: emailservice
                 port:
                   number: 80
-    - host: {{ .Values.ingress.hosts[1] }}
+    - host: {{ index .Values.ingress.hosts 1 }}
       http:
         paths:
           - path: /
@@ -33,6 +34,7 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - {{ .Values.ingress.hosts[0] }}
-        - {{ .Values.ingress.hosts[1] }}
-      secretName: {{ .Values.ingress.tls[0].secretName }}
+        - {{ index .Values.ingress.hosts 0 }}
+        - {{ index .Values.ingress.hosts 1 }}
+      secretName: {{ (index .Values.ingress.tls 0).secretName }}
+{{- end -}}

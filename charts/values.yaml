@@ -1,15 +1,18 @@
 commonRepository : "REQUIRED"
+host: example.com
 
 emailServiceApi:
   replicaCount: 1
-  repository: "{{ .Values.commonRepository }}/emailservice"
+  repository: "{{ .Values.commonRepository }}"
+  image: emailservice
   tag: latest
   pullPolicy: IfNotPresent
   otelServiceName: "email-service-api"
 
 processorService:
   replicaCount: 1
-  repository: "{{ .Values.commonRepository }}/processorhost"
+  repository: "{{ .Values.commonRepository }}"
+  image: processorhost
   tag: latest
   pullPolicy: IfNotPresent
   otelServiceName: "email-service-processor"
@@ -32,10 +35,10 @@ topics:
     replicas: 3
 
 ingress:
-  enabled: true
+  enabled: false
   hosts:
-    - emailservice.gigya.net
-    - processorhost.gigya.net
+    - emailservice.{{ .Values.host }}
+    - processorhost.{{ .Values.host }}
   tls:
     - secretName: "REQUIRED"
   annotations:
