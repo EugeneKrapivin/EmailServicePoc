@@ -36,5 +36,5 @@ spec:
     - hosts:
         - {{ index .Values.ingress.hosts 0 }}
         - {{ index .Values.ingress.hosts 1 }}
-      secretName: {{ (index .Values.ingress.tls 0).secretName }}
+      secretName: {{ .Values.ingress.annotations.sslCertificate }}
 {{- end -}}

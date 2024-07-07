@@ -39,7 +39,5 @@ ingress:
   hosts:
     - emailservice.{{ .Values.host }}
     - processorhost.{{ .Values.host }}
-  tls:
-    - secretName: "REQUIRED"
   annotations:
     sslCertificate: "REQUIRED"
