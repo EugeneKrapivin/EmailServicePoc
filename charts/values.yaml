@@ -1,3 +1,5 @@
+commonRepository : "REQUIRED"
+
 emailServiceApi:
   replicaCount: 1
   repository: "{{ .Values.commonRepository }}/emailservice"
@@ -28,3 +30,13 @@ topics:
   - name: template-render
     partitions: 3
     replicas: 3
+
+ingress:
+  enabled: true
+  hosts:
+    - emailservice.gigya.net
+    - processorhost.gigya.net
+  tls:
+    - secretName: "REQUIRED"
+  annotations:
+    sslCertificate: "REQUIRED"

@@ -18,14 +18,14 @@ spec:
       inter.broker.protocol.version: "3.7"
     storage:
       type: persistent-claim
-      size: 100Gi
-      deleteClaim: false
+      size: 50Gi
+      deleteClaim: true
   zookeeper:
     replicas: 3
     storage:
       type: persistent-claim
-      size: 100Gi
-      deleteClaim: false
+      size: 10Gi
+      deleteClaim: true
   entityOperator:
     topicOperator: {}
     userOperator: {}

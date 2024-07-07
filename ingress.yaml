@@ -1,0 +1,38 @@
+{{- include "required-ssl-cert" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: emailservice-ingress
+  annotations:
+    haproxy.org/server-ssl: 'true'
+    haproxy.org/ssl-certificate: {{ .Values.ingress.annotations.sslCertificate }}
+    haproxy.org/ssl-redirect: 'true'
+    haproxy.org/ssl-redirect-port: '443'
+    kubernetes.io/ingress.class: haproxy
+spec:
+  rules:
+    - host: {{ .Values.ingress.hosts[0] }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: emailservice
+                port:
+                  number: 80
+    - host: {{ .Values.ingress.hosts[1] }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: processorhost
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hosts[0] }}
+        - {{ .Values.ingress.hosts[1] }}
+      secretName: {{ .Values.ingress.tls[0].secretName }}

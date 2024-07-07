@@ -1,4 +1,4 @@
-{{- include "validateRequired" . -}}
+{{- include "required-repository" . -}}
 
 apiVersion: apps/v1
 kind: Deployment

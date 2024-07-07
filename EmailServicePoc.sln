@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 	ProjectSection(SolutionItems) = preProject
 		charts\templates\deployment-emailservice.yaml = charts\templates\deployment-emailservice.yaml
 		charts\templates\deployment-processorhost.yaml = charts\templates\deployment-processorhost.yaml
+		ingress.yaml = ingress.yaml
 		charts\templates\kafka-cluster.yaml = charts\templates\kafka-cluster.yaml
 		charts\templates\kafka-topics.yaml = charts\templates\kafka-topics.yaml
 		charts\templates\service-emailservice.yaml = charts\templates\service-emailservice.yaml
