@@ -35,6 +35,24 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailServicePoc.ServiceDefaults", "Aspire\EmailServicePoc.ServiceDefaults\EmailServicePoc.ServiceDefaults.csproj", "{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "charts", "charts", "{05EB696B-9592-4961-80A3-2125DEC8BF48}"
+	ProjectSection(SolutionItems) = preProject
+		charts\.helmignore = charts\.helmignore
+		charts\Chart.yaml = charts\Chart.yaml
+		charts\values.yaml = charts\values.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{D933EF50-D471-432A-9A67-581D60C9FC7B}"
+	ProjectSection(SolutionItems) = preProject
+		charts\templates\deployment-emailservice.yaml = charts\templates\deployment-emailservice.yaml
+		charts\templates\deployment-processorhost.yaml = charts\templates\deployment-processorhost.yaml
+		charts\templates\kafka-cluster.yaml = charts\templates\kafka-cluster.yaml
+		charts\templates\kafka-topics.yaml = charts\templates\kafka-topics.yaml
+		charts\templates\service-emailservice.yaml = charts\templates\service-emailservice.yaml
+		charts\templates\service-processorhost.yaml = charts\templates\service-processorhost.yaml
+		charts\templates\_helpers.tpl = charts\templates\_helpers.tpl
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +97,7 @@ Global
 		{C1C480E7-EE4C-412A-9631-DCC280C8C37C} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
 		{D962BB60-F43D-4D0D-9F27-9507145A4882} = {AB619B99-671C-4CFD-823D-618418223221}
 		{C582280E-78B2-4A87-A3FA-455E8EE7C270} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
+		{D933EF50-D471-432A-9A67-581D60C9FC7B} = {05EB696B-9592-4961-80A3-2125DEC8BF48}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {106683E3-F719-41C1-8C23-328FB8677D70}

@@ -1,0 +1,48 @@
+{{- include "validateRequired" . -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processorhost
+spec:
+  replicas: {{ .Values.processorService.replicaCount }}
+  selector:
+    matchLabels:
+      app: processorhost
+  template:
+    metadata:
+      labels:
+        app: processorhost
+    spec:
+      containers:
+        - name: processorhost
+          image: "{{ .Values.processorService.repository }}:{{ .Values.processorService.tag }}"
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          env:
+            - name: Azure__AzureStorageConnectionString
+              valueFrom:
+                secretKeyRef:
+                  name: azure-storage-secret
+                  key: connectionString
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.env.otelExporterOtlpEndpoint }}
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.processorService.otelServiceName }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.env.otelResourceAttributes }}
+            - name: Kafka__Bootstrap__0
+              value: {{ .Values.kafka.clusterName }}-bootstrap:9092
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /alive
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10

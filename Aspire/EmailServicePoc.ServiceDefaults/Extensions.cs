@@ -99,10 +99,10 @@ public static class Extensions
         builder.Logging.AddOpenTelemetry(logging =>
             logging
                 .AddOtlpExporter(opts =>
-        {
-                opts.Endpoint = new Uri(otelEndpoint);
-                opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-            }));
+                {
+                    opts.Endpoint = new Uri(otelEndpoint);
+                    opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                }));
 
         otel.WithMetrics(metrics =>
             metrics.AddOtlpExporter("default", (opts, reader) =>

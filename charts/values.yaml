@@ -1,0 +1,30 @@
+emailServiceApi:
+  replicaCount: 1
+  repository: "{{ .Values.commonRepository }}/emailservice"
+  tag: latest
+  pullPolicy: IfNotPresent
+  otelServiceName: "email-service-api"
+
+processorService:
+  replicaCount: 1
+  repository: "{{ .Values.commonRepository }}/processorhost"
+  tag: latest
+  pullPolicy: IfNotPresent
+  otelServiceName: "email-service-processor"
+
+kafka:
+  clusterName: my-cluster
+  version: "3.7.0"
+  replicas: 3
+
+env:
+  otelExporterOtlpEndpoint: "http://otel-collector:5317"
+  otelResourceAttributes: "deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01"
+
+topics:
+  - name: outbox
+    partitions: 3
+    replicas: 3
+  - name: template-render
+    partitions: 3
+    replicas: 3

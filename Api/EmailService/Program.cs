@@ -21,7 +21,8 @@ builder.Services
     .BindConfiguration("Azure");
 
 builder.Services
-    .AddOptions<KafkaConfig>().BindConfiguration("Kafka");
+    .AddOptions<KafkaConfig>()
+    .BindConfiguration("Kafka");
 
 builder.AddServiceDefaults();
 
