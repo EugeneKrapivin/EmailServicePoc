@@ -1,7 +1,3 @@
-{{- define "email-processor.fullname" -}}
-{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
 {{- define "required-repository" -}}
 {{- if (eq .Values.commonRepository "REQUIRED") -}}
 {{- fail "commonRepository is a required value" -}}
@@ -15,7 +11,7 @@
 {{- end -}}
 
 {{- define "email-processor.labels" -}}
-app.kubernetes.io/name: {{ include "email-processor.fullname" . }}
+app.kubernetes.io/name: {{ .Release.Name | trunc 63 | trimSuffix "-" }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion }}
 app.kubernetes.io/component: {{ .Values.component | default "email-processor" }}
