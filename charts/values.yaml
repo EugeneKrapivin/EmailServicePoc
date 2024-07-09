@@ -2,7 +2,7 @@ repository : REQUIRED
 host: example.com
 
 emailServiceApi:
-  replicaCount: 1
+  replicaCount: 3
   repository: emailservice
   image: 
   tag: latest
@@ -10,7 +10,7 @@ emailServiceApi:
   otelServiceName: email-service-api
 
 processorService:
-  replicaCount: 3
+  replicaCount: 6
   repository: processorhost
   tag: latest
   pullPolicy: IfNotPresent
@@ -30,16 +30,16 @@ kafka:
   replicas: 3
 
 env:
-  otelExporterOtlpEndpoint: http://otel-collector:5317
+  otelExporterOtlpEndpoint: http://localhost:4317
   otelResourceAttributes: deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
 
 topics:
   - name: outbox
-    partitions: 3
-    replicas: 3
+    partitions: 30
+    replicas: 2
   - name: template-render
-    partitions: 3
-    replicas: 3
+    partitions: 30
+    replicas: 2
 
 ingress:
   enabled: true

@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: mailpit
   labels:
@@ -17,11 +17,15 @@ spec:
       containers:
         - name: mailpit
           image: {{ .Values.mailpit.repository }}:{{ .Values.mailpit.tag }}
+          resources: 
+            requests:
+              cpu: 4
+              memory: 4Gi
+            limits:
+              memory: 16Gi
           ports:
             - containerPort: 1025
             - containerPort: 8025
-          env:
-            
           livenessProbe:
             httpGet:
               path: /livez
@@ -41,6 +45,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  app: mailpit
   name: mailpit
 spec:
   selector:

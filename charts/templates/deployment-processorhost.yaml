@@ -19,10 +19,18 @@ spec:
         orleans/serviceId: {{ .Values.processorService.serviceId }}
         orleans/clusterId: {{ .Values.processorService.clusterId }}
         {{- include "email-processor.labels" . | nindent 8 }}
+      annotations:
+        sidecar.opentelemetry.io/inject: "true"
     spec:
       containers:
         - name: processorhost
           image: {{ .Values.processorService.repository }}:{{ .Values.processorService.tag }}
+          resources: 
+            requests:
+              cpu: 4
+              memory: 4Gi
+            limits:
+              memory: 16Gi
           ports:
             - containerPort: 8080
             - containerPort: 11111
