@@ -3,16 +3,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: emailservice-ingress
+  name: emailservice-api-ingress
   labels:
     {{- include "email-processor.labels" . | nindent 4 }}
   annotations:
-    haproxy.org/server-ssl: 'true'
+    haproxy.org/server-ssl: 'false'
     haproxy.org/ssl-certificate: {{ .Values.ingress.annotations.sslCertificate }}
-    haproxy.org/ssl-redirect: 'true'
+    haproxy.org/ssl-redirect: 'false'
     haproxy.org/ssl-redirect-port: '443'
-    kubernetes.io/ingress.class: haproxy
 spec:
+  ingressClassName: haproxy
   rules:
     - host: {{ index .Values.ingress.hosts 0 }}
       http:
@@ -23,7 +23,30 @@ spec:
               service:
                 name: emailservice
                 port:
-                  number: 80
+                  number: 8080
+  tls:
+    - hosts:
+      - {{ index .Values.ingress.hosts 0 }}
+{{- end }}
+
+---
+
+{{- if .Values.ingress.enabled -}}
+{{- include "required-ssl-cert" . -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: emailservice-host-ingress
+  labels:
+    {{- include "email-processor.labels" . | nindent 4 }}
+  annotations:
+    haproxy.org/server-ssl: 'false'
+    haproxy.org/ssl-certificate: {{ .Values.ingress.annotations.sslCertificate }}
+    haproxy.org/ssl-redirect: 'false'
+    haproxy.org/ssl-redirect-port: '443'
+spec:
+  ingressClassName: haproxy
+  rules:
     - host: {{ index .Values.ingress.hosts 1 }}
       http:
         paths:
@@ -33,10 +56,8 @@ spec:
               service:
                 name: processorhost
                 port:
-                  number: 80
+                  number: 8080
   tls:
-    - hosts:
-        - {{ index .Values.ingress.hosts 0 }}
-        - {{ index .Values.ingress.hosts 1 }}
-      secretName: {{ .Values.ingress.annotations.sslCertificate }}
+    - hosts: 
+      - {{ index .Values.ingress.hosts 1 }}
 {{- end }}

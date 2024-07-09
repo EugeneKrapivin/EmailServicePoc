@@ -9,19 +9,25 @@ using KafkaFlow.Serializer;
 
 using Orleans.Configuration;
 using Orleans.Serialization;
+using Orleans.Hosting;
 
 using Processor.Grains;
 using Processor.Host;
 
 using System.Diagnostics.Metrics;
 using System.Net;
+using Microsoft.Extensions.Options;
+using Confluent.Kafka;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddOptions<AzureConfig>().BindConfiguration("Azure");
+    .AddOptions<AzureConfig>()
+    .BindConfiguration("Azure");
+
 builder.Services
-    .AddOptions<KafkaConfig>().BindConfiguration("Kafka");
+    .AddOptions<KafkaConfig>()
+    .BindConfiguration("Kafka");
 
 builder.AddServiceDefaults();
 
@@ -42,16 +48,34 @@ builder.Host.UseOrleans((ctx,siloBuilder) =>
 
     siloBuilder.AddActivityPropagation();
 
-    siloBuilder.Configure<ClusterOptions>(options =>
-    {
-        options.ClusterId = Constants.ClusterId;
-        options.ServiceId = Constants.ServiceId;
-    });
 
-    siloBuilder.ConfigureEndpoints(Dns.GetHostAddresses("email-service-processor")[0], // for demo this is "secure enough"
-        11111, 
-        30000, 
-        listenOnAnyHostAddress: true);
+    if (Environment.GetEnvironmentVariable("is_k8s") == "true")
+    {
+        siloBuilder.UseKubernetesHosting();
+    }
+    else 
+    { 
+        siloBuilder.Configure<ClusterOptions>(options =>
+        {
+            options.ClusterId = Constants.ClusterId;
+            options.ServiceId = Constants.ServiceId;
+        });
+        if (Environment.GetEnvironmentVariable("is_compose") == "true")
+        { 
+            siloBuilder.ConfigureEndpoints(Dns.GetHostAddresses("email-service-processor")[0], // for demo this is "secure enough"
+            11111, 
+            30000, 
+            listenOnAnyHostAddress: true);
+        }
+        else
+        {
+            siloBuilder.ConfigureEndpoints(Dns.GetHostName(), // for demo this is "secure enough"
+            11111,
+            30000,
+            listenOnAnyHostAddress: true);
+        }
+    }
+
     siloBuilder
         .UseAzureStorageClustering(opts => 
         {
@@ -133,6 +157,8 @@ builder.Services.AddKafkaFlowHostedService(kafka =>
             .EnableTelemetry("kafka-flow.admin", "kfk-flow-telemetry"));
 });
 
+builder.Services.AddHostedService<KafkaTopicBootstrap>();
+
 builder.Services
     .AddOpenTelemetry()
     .WithTracing(tracing => tracing
@@ -147,7 +173,6 @@ builder.Services
         .AddMeter("TemplatesMeter"));
 
 builder.Services.AddControllers();
-
 
 var host = builder.Build();
 
@@ -164,3 +189,44 @@ host.MapControllers();
 host.MapDefaultEndpoints();
 
 host.Run();
+
+public class KafkaTopicBootstrap : IHostedService
+{
+    private readonly IOptions<KafkaConfig> _kafkaConfig;
+
+    public KafkaTopicBootstrap(IOptions<KafkaConfig> kafkaConfig)
+    {
+        _kafkaConfig = kafkaConfig;
+    }
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var admin = new AdminClientBuilder(new AdminClientConfig
+            {
+                BootstrapServers = string.Join(",", _kafkaConfig.Value.Bootstrap)
+            }).Build();
+
+            await admin.CreateTopicsAsync([
+                new()
+                {
+                    Name = Constants.KafkaOutboxEmailTopic,
+                    NumPartitions = 3,
+                    ReplicationFactor = 2
+                },
+                new()
+                {
+                    Name = Constants.RenderEmailTopic,
+                    NumPartitions = 3,
+                    ReplicationFactor = 2
+                }]);
+
+        }
+        catch { }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+}

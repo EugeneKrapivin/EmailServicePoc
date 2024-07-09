@@ -32,6 +32,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:5317
       - OTEL_SERVICE_NAME=EmailService_Host
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
+      - is_compose=true
     networks:
       default:
         aliases:

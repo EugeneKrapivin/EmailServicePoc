@@ -49,6 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 		charts\templates\ingress.yaml = charts\templates\ingress.yaml
 		charts\templates\kafka-cluster.yaml = charts\templates\kafka-cluster.yaml
 		charts\templates\kafka-topics.yaml = charts\templates\kafka-topics.yaml
+		charts\templates\mailpit.yaml = charts\templates\mailpit.yaml
 		charts\templates\service-emailservice.yaml = charts\templates\service-emailservice.yaml
 		charts\templates\service-processorhost.yaml = charts\templates\service-processorhost.yaml
 		charts\templates\_helpers.tpl = charts\templates\_helpers.tpl

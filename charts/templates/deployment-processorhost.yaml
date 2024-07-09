@@ -1,34 +1,40 @@
-{{- include "required-repository" . -}}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: processorhost
   labels:
+    orleans/serviceId: {{ .Values.processorService.serviceId }}
+    app: processorhost
     {{- include "email-processor.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.processorService.replicaCount }}
   selector:
     matchLabels:
       app: processorhost
+      orleans/serviceId: email-processor-poc
   template:
     metadata:
       labels:
         app: processorhost
+        orleans/serviceId: {{ .Values.processorService.serviceId }}
+        orleans/clusterId: {{ .Values.processorService.clusterId }}
         {{- include "email-processor.labels" . | nindent 8 }}
     spec:
       containers:
         - name: processorhost
-          image: "{{ .Values.processorService.repository }}/{{ .Values.processorService.image }}:{{ .Values.processorService.tag }}"
+          image: {{ .Values.processorService.repository }}:{{ .Values.processorService.tag }}
           ports:
-            - containerPort: 80
-            - containerPort: 443
+            - containerPort: 8080
+            - containerPort: 11111
+            - containerPort: 30000
           env:
+            - name: is_k8s
+              value: "true"
             - name: Azure__AzureStorageConnectionString
               valueFrom:
                 secretKeyRef:
                   name: azure-storage-secret
-                  key: connectionString
+                  key: Azure__AzureStorageConnectionString
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.env.otelExporterOtlpEndpoint }}
             - name: OTEL_SERVICE_NAME
@@ -36,16 +42,78 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: {{ .Values.env.otelResourceAttributes }}
             - name: Kafka__Bootstrap__0
-              value: {{ .Values.kafka.clusterName }}-bootstrap:9092
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 80
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              value: {{ .Values.kafka.clusterName }}-kafka-bootstrap:9092
+            # Configure settings to let Orleans know which cluster it belongs to
+            # and which pod it is running in
+            - name: ORLEANS_SERVICE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['orleans/serviceId']
+            - name: ORLEANS_CLUSTER_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['orleans/clusterId']
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP  
+            - name: Logging__LogLevel__Default
+              value: Information
+            - name: Logging__LogLevel__Microsoft.AspNetCore
+              value:  Information
+            - name: Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics
+              value:  Warning
+            - name: Logging__LogLevel__Microsoft.AspNetCore.Routing
+              value:  Warning
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+
           livenessProbe:
             httpGet:
               path: /alive
-              port: 80
-            initialDelaySeconds: 5
+              port: 8080
+            failureThreshold: 1
             periodSeconds: 10
+          
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+      terminationGracePeriodSeconds: 180
+  minReadySeconds: 60
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-updater
+rules:
+- apiGroups: [ "" ]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list", "patch", "delete", "update", "create"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-updater-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+  apiGroup: ''
+roleRef:
+  kind: Role
+  name: pod-updater
+  apiGroup: ''

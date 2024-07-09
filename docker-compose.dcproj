@@ -6,7 +6,7 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>2f99c479-0fb5-4248-81a6-c2ccd0397765</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger/index.html</DockerServiceUrl>
+    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/scalar/v1</DockerServiceUrl>
     <DockerServiceName>emailservice</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

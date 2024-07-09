@@ -19,9 +19,10 @@
 		<PackageReference Include="Microsoft.Orleans.Client" />
 		<PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" />
 		<PackageReference Include="Microsoft.Orleans.Clustering.Redis" />
+		<PackageReference Include="Microsoft.Orleans.Hosting.Kubernetes" />
 		<PackageReference Include="Microsoft.Orleans.Serialization.SystemTextJson" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
-		<PackageReference Include="Swashbuckle.AspNetCore" />
+		<PackageReference Include="SystemTextJsonPatch" />
 	</ItemGroup>
 
 	<ItemGroup>

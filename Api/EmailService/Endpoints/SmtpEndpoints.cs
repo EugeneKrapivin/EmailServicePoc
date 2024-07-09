@@ -3,11 +3,8 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Processor.Grains.Interfaces;
-using Microsoft.Extensions.Azure;
-using System.Net;
-using System.Text.Json.Serialization;
-using static EmailService.SMTPEndpoints.SmtpEndpoints;
 using Microsoft.AspNetCore.Http.HttpResults;
+using SystemTextJsonPatch;
 
 namespace EmailService.SMTPEndpoints;
 
@@ -20,46 +17,64 @@ public static class SmtpEndpoints
         string FromName,
         string UserName,
         string Password);
-    
+
     public static WebApplication RegisterSmtpEndpoints(this WebApplication app)
     {
         var smtpEndpoints = app.MapGroup("/config/{clientId}/smtp");
+        smtpEndpoints.WithDescription("endpoints for configuration management of client smtp configs")
+            .WithDisplayName("smtp-config")
+            .WithTags(["smtp"]);
 
         smtpEndpoints
-            .MapGet("/", async ([FromRoute] string clientId, [FromServices] IClusterClient clusterClient) =>
-            {
-                var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
+            .MapGet("/", async (
+                    [FromRoute] string clientId,
+                    [FromServices] IClusterClient clusterClient,
+                    [FromServices] ILogger<WebApplication> logger) =>
+                {
+                    var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
 
-                var config = await configGrain.GetConfig();
+                    var config = await configGrain.GetConfig();
+                    if (config is null)
+                    {
+                        logger.LogWarning("smtp configuration for {clientId} not found", clientId);
+                        return Results.NotFound();
+                    }
+                    var result = new ClientStmpConfigResponse
+                    (
+                        From: config.From,
+                        FromName: config.FromName,
+                        UserName: config.UserName,
+                        Password: "***",
+                        ServerPort: config.ServerPort,
+                        ServerUrl: config.ServerUrl
+                    );
 
-                return config is null
-                    ? Results.NotFound()
-                    : TypedResults.Ok(
-                        new ClientStmpConfigResponse
-                        (
-                            From: config.From,
-                            FromName: config.FromName,
-                            UserName: config.UserName,
-                            Password: "***",
-                            ServerPort: config.ServerPort,
-                            ServerUrl: config.ServerUrl
-                        ));
-            })
-            .Produces<ClientStmpConfigResponse>(200, "application/json")
-            .Produces<NotFound>(404, "application/json")
-            .WithName("get-client-smtp-config")
-            .WithOpenApi();
+                    return TypedResults.Ok(result);
+                })
+                .Produces<ClientStmpConfigResponse>(200, "application/json")
+                .Produces<NotFound>(404, "application/json")
+                .WithName("get-client-smtp-config")
+                .WithOpenApi();
 
         smtpEndpoints
-            .MapPost("/", async ([FromRoute] string clientId, [FromBody] SmtpConfig config, [FromServices] IClusterClient clusterClient) =>
+            .MapPost("/", async (
+                [FromRoute] string clientId,
+                [FromBody] SmtpConfig config,
+                [FromServices] ILogger<WebApplication> logger,
+                [FromServices] IClusterClient clusterClient) =>
             {
                 // TODO: validate input
 
                 var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
 
+                if (await configGrain.GetConfig() is not null)
+                {
+                    logger.LogWarning("smtp configuration for {clientId} already exists.", clientId);
+                    return Results.BadRequest();
+                }
+
                 await configGrain.SetConfig(config);
 
-                // TODO: handle create-at header
                 return TypedResults.CreatedAtRoute(
                    new ClientStmpConfigResponse
                    (
@@ -74,6 +89,80 @@ public static class SmtpEndpoints
             })
             .Produces<ClientStmpConfigResponse>(201, "application/json")
             .WithName("set-client-smtp-config")
+            .WithOpenApi();
+
+        smtpEndpoints
+            .MapPut("/", async (
+                [FromRoute] string clientId,
+                [FromBody] SmtpConfig config,
+                [FromServices] ILogger<WebApplication> logger,
+                [FromServices] IClusterClient clusterClient) =>
+            {
+                // TODO: validate input
+
+                var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
+
+                if (await configGrain.GetConfig() is null)
+                {
+                    logger.LogWarning("smtp configuration for {clientId} not found.", clientId);
+                    return Results.NotFound();
+                }
+
+                await configGrain.SetConfig(config);
+
+                return TypedResults.Ok(
+                   new ClientStmpConfigResponse
+                   (
+                       From: config.From,
+                       FromName: config.FromName,
+                       UserName: config.UserName,
+                       Password: "***",
+                       ServerPort: config.ServerPort,
+                       ServerUrl: config.ServerUrl
+                   ));
+            })
+            .Produces<ClientStmpConfigResponse>(200, "application/json")
+            .Produces<NotFound>(404, "application/json")
+            .WithName("update-client-smtp-config")
+            .WithOpenApi();
+
+        // this will probably not work since SmtpConfig is a record
+        smtpEndpoints
+            .MapPatch("/", async (
+                [FromRoute] string clientId,
+                [FromBody] JsonPatchDocument<SmtpConfig> patchDoc,
+                [FromServices] ILogger<WebApplication> logger,
+                [FromServices] IClusterClient clusterClient) =>
+            {
+                // TODO: validate input
+
+                var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
+
+                var existingConfig = await configGrain.GetConfig();
+                if (existingConfig is null)
+                {
+                    logger.LogWarning("smtp configuration for {clientId} not found.", clientId);
+                    return Results.NotFound();
+                }
+
+                patchDoc.ApplyTo(existingConfig);
+
+                await configGrain.SetConfig(existingConfig);
+
+                return TypedResults.Ok(
+                   new ClientStmpConfigResponse
+                   (
+                       From: existingConfig.From,
+                       FromName: existingConfig.FromName,
+                       UserName: existingConfig.UserName,
+                       Password: "***",
+                       ServerPort: existingConfig.ServerPort,
+                       ServerUrl: existingConfig.ServerUrl
+                   ));
+            })
+            .Produces<ClientStmpConfigResponse>(200, "application/json")
+            .Produces<NotFound>(404, "application/json")
+            .WithName("patch-client-smtp-config")
             .WithOpenApi();
 
         return app;

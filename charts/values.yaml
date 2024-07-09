@@ -1,30 +1,37 @@
-commonRepository : "REQUIRED"
+repository : REQUIRED
 host: example.com
 
 emailServiceApi:
   replicaCount: 1
-  repository: "{{ .Values.commonRepository }}"
-  image: emailservice
+  repository: emailservice
+  image: 
   tag: latest
   pullPolicy: IfNotPresent
-  otelServiceName: "email-service-api"
+  otelServiceName: email-service-api
 
 processorService:
-  replicaCount: 1
-  repository: "{{ .Values.commonRepository }}"
-  image: processorhost
+  replicaCount: 3
+  repository: processorhost
   tag: latest
   pullPolicy: IfNotPresent
-  otelServiceName: "email-service-processor"
+  otelServiceName: email-service-processor
+  clusterId: email-processor-poc
+  serviceId: email-processor-poc
+
+mailpit:
+  replicaCount: 4
+  repository: mailpit
+  tag: latest
+  pullPolicy: IfNotPresent
 
 kafka:
-  clusterName: my-cluster
-  version: "3.7.0"
+  clusterName: email-svc-poc-kfk
+  version: "3.5.2"
   replicas: 3
 
 env:
-  otelExporterOtlpEndpoint: "http://otel-collector:5317"
-  otelResourceAttributes: "deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01"
+  otelExporterOtlpEndpoint: http://otel-collector:5317
+  otelResourceAttributes: deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
 
 topics:
   - name: outbox
@@ -37,7 +44,7 @@ topics:
 ingress:
   enabled: true
   hosts:
-    - emailservice.{{ .Values.host }}
-    - processorhost.{{ .Values.host }}
+    - emailservice.gigya.net
+    - processorhost.gigya.net
   annotations:
-    sslCertificate: "REQUIRED"
+    sslCertificate: REQUIRED

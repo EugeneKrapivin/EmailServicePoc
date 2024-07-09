@@ -11,6 +11,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
+using Scalar.AspNetCore;
+
 using System.Diagnostics;
 using System.Reflection;
 
@@ -35,17 +37,22 @@ public static class Extensions
             http.AddServiceDiscovery();
         });
 
+        builder.Services.AddOpenApi();
+
         return builder;
     }
 
     public static IHostApplicationBuilder ConfigureOpenTelemetry(this IHostApplicationBuilder builder)
     {
-        builder.Logging.AddOpenTelemetry(logging =>
+        builder.Services.AddLogging(logging =>
         {
-            logging.IncludeFormattedMessage = true;
-            logging.IncludeScopes = true;
+            logging.AddOpenTelemetry(otel =>
+            {
+                otel.IncludeFormattedMessage = true;
+                otel.IncludeScopes = true;
+            }).AddConsole();
         });
-        
+
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
@@ -149,8 +156,15 @@ public static class Extensions
 
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.MapScalarApiReference();
+        }
+
+        app.MapOpenApi();
         app.MapHealthChecks("/health");
-        app.MapHealthChecks("/alive", new HealthCheckOptions
+        app.MapHealthChecks("/alive", new()
         {
             Predicate = r => r.Tags.Contains("live")
         });

@@ -21,6 +21,7 @@
 		<PackageReference Include="Microsoft.Orleans.Clustering.Redis" />
 		<PackageReference Include="Microsoft.Orleans.GrainDirectory.AzureStorage" />
 		<PackageReference Include="Microsoft.Orleans.GrainDirectory.Redis" />
+		<PackageReference Include="Microsoft.Orleans.Hosting.Kubernetes" />
 		<PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" />
 		<PackageReference Include="Microsoft.Orleans.Persistence.Redis" />
 		<PackageReference Include="Microsoft.Orleans.Reminders.AzureStorage" />

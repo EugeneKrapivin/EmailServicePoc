@@ -26,12 +26,6 @@ builder.Services
 
 builder.AddServiceDefaults();
 
-builder.Services.AddProblemDetails();
-
-builder.Services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen();
-
 builder.Services.AddOrleansClient(clientBuilder =>
 {
     var secrets = builder.Configuration.GetSection("Azure").Get<AzureConfig>();
@@ -45,11 +39,11 @@ builder.Services.AddOrleansClient(clientBuilder =>
     {
         opts.TableServiceClient = new TableServiceClient(secrets.AzureStorageConnectionString);
     });
-
+    
     clientBuilder.Configure<ClusterOptions>(options =>
     {
-        options.ClusterId = Constants.ClusterId;
-        options.ServiceId = Constants.ServiceId;
+        options.ClusterId = Environment.GetEnvironmentVariable("processorService__ClusterId") ?? Constants.ClusterId;
+        options.ServiceId = Environment.GetEnvironmentVariable("processorService__ServiceId") ?? Constants.ServiceId;
     });
     clientBuilder.UseConnectionRetryFilter((ex, c) => Task.FromResult(true));
     clientBuilder.AddActivityPropagation();
@@ -61,7 +55,9 @@ builder.Services.AddOrleansClient(clientBuilder =>
 
 builder.Services.AddKafka(kafka =>
 {
-    var config = builder.Configuration.GetRequiredSection("Kafka").Get<KafkaConfig>();
+    var config = builder.Configuration
+        .GetRequiredSection("Kafka")
+        .Get<KafkaConfig>();
 
     kafka
         .UseMicrosoftLog()
@@ -84,13 +80,6 @@ app.MapDefaultEndpoints();
 app.RegisterSmtpEndpoints()
     .RegisterTemplateEndpoints()
     .RegisterEmailEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 

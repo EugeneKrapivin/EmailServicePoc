@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Observability/grafana/data
 /Observability/loki/tmp/loki
+/secret.yaml

@@ -12,7 +12,10 @@ public static class TemplateEndpoints
     public static WebApplication RegisterTemplateEndpoints(this WebApplication app)
     {
         var templateEndpoints = app.MapGroup("/config/{clientId}/templates");
-        
+        templateEndpoints.WithDescription("endpoints for managing email templates per client")
+            .WithDisplayName("email-templates")
+            .WithTags(["templates"]);
+
         templateEndpoints
             .MapGet("/{type}/{lang?}", async ([FromRoute] string clientId, [FromRoute] string type, [FromRoute] string? lang, [FromServices] IClusterClient clusterClient) =>
             {

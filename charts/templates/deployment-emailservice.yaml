@@ -1,5 +1,3 @@
-{{- include "required-repository" . -}}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,16 +17,15 @@ spec:
     spec:
       containers:
         - name: emailservice
-          image: "{{ .Values.emailServiceApi.repository }}/{{ .Values.emailServiceApi.image }}:{{ .Values.emailServiceApi.tag }}"
+          image: {{ .Values.emailServiceApi.repository }}:{{ .Values.emailServiceApi.tag }}
           ports:
-            - containerPort: 80
-            - containerPort: 443
+            - containerPort: 8080
           env:
             - name: Azure__AzureStorageConnectionString
               valueFrom:
                 secretKeyRef:
                   name: azure-storage-secret
-                  key: connectionString
+                  key: Azure__AzureStorageConnectionString
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: {{ .Values.env.otelExporterOtlpEndpoint }}
             - name: OTEL_SERVICE_NAME
@@ -36,16 +33,33 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: {{ .Values.env.otelResourceAttributes }}
             - name: Kafka__Bootstrap__0
-              value: {{ .Values.kafka.clusterName }}-bootstrap:9092
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: 80
-            initialDelaySeconds: 5
-            periodSeconds: 10
+              value: {{ .Values.kafka.clusterName }}-kafka-bootstrap:9092
+            - name: processorService__ServiceId
+              value: {{ .Values.processorService.serviceId }}
+            - name: processorService__ClusterId
+              value: {{ .Values.processorService.clusterId }}
+            - name: Logging__LogLevel__Default
+              value: Information
+            - name: Logging__LogLevel__Microsoft.AspNetCore
+              value:  Information
+            - name: Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics
+              value:  Warning
+            - name: Logging__LogLevel__Microsoft.AspNetCore.Routing
+              value:  Warning
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+
           livenessProbe:
             httpGet:
               path: /alive
-              port: 80
-            initialDelaySeconds: 5
+              port: 8080
+            failureThreshold: 1
             periodSeconds: 10
+          
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
+      terminationGracePeriodSeconds: 180
