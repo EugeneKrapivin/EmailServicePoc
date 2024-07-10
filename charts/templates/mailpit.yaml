@@ -19,13 +19,20 @@ spec:
           image: {{ .Values.mailpit.repository }}:{{ .Values.mailpit.tag }}
           resources: 
             requests:
-              cpu: 4
+              cpu: 8
               memory: 4Gi
             limits:
               memory: 16Gi
           ports:
             - containerPort: 1025
             - containerPort: 8025
+          env:
+            - name: MP_MAX_MESSAGES
+              value: "0"
+            - name: MP_SMTP_AUTH_ACCEPT_ANY
+              value: "true"
+            - name: MP_SMTP_AUTH_ALLOW_INSECURE
+              value: "true"
           livenessProbe:
             httpGet:
               path: /livez
@@ -45,8 +52,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  app: mailpit
   name: mailpit
+  labels:
+    app: mailpit
 spec:
   selector:
     app: mailpit

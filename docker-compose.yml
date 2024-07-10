@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+  
   emailservice:
     image: ${DOCKER_REGISTRY-}emailservice
     build:
@@ -10,15 +11,11 @@ services:
       - "8080"
       - "8081"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:5317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTEL_SERVICE_NAME=EmailService_API
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
-    networks:
-      cp-all-in-one_default:
-      default:
-        aliases:
-          - email-service-api
-      monitoring:
+      - Kafka__Bootstrap=broker:9092
+      - Azure__AzureStorageConnectionString:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1; 
 
   processor.host:
     image: ${DOCKER_REGISTRY-}processorhost
@@ -29,36 +26,66 @@ services:
       - "8080"
       - "8081"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:5317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTEL_SERVICE_NAME=EmailService_Host
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
       - is_compose=true
-    networks:
-      default:
-        aliases:
-          - email-service-processor
-      cp-all-in-one_default:
-      mailpit_default:
-      monitoring:
+      - Kafka__Bootstrap=broker:9092
+      - Azure__AzureStorageConnectionString:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1; 
+  
+  broker:
+    image: confluentinc/cp-server:7.5.0
+    hostname: broker
+    container_name: broker
+    ports:
+      - "9092:9092"
+      - "9101:9101"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://broker:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://broker:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+  
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:8.0.0
+    container_name: aspire-dashboard
+    hostname: aspire-dashboard
+    ports:
+      - 18888:18888
+      - 4317:18889
+    environment:
+      DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS: true
 
-  # otel-collector:
-  #   image: otel/opentelemetry-collector-contrib:latest
-  #   container_name: email_service-otel-collector
-  #   restart: always
-  #   command: ["--config=/etc/otel-collector-config.yaml"]
-  #   volumes:
-  #     - ./Observability/otel-collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
-  #   networks:
-  #     - monitoring
-  #     - poc
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite 
+    container_name: azurite
+    hostname: azurite
+    ports:
+      - 10001:10001
+      - 10002:10002
+      - 10003:10003
+    volumes:
+      - c:/docker/azurite:/workspace
+    command: "azurite -l /workspace -d /workspace/debug.log --blobPort 10001 --blobHost 0.0.0.0 --queuePort 10002 --queueHost 0.0.0.0 --tablePort 10003 --tableHost 0.0.0.0 --loose --skipApiVersionCheck --disableProductStyleUrl"
 
-networks:
-  cp-all-in-one_default:
-    name: cp-all-in-one_default
-    external: true
-  mailpit_default:
-    name: mailpit_default
-    external: true  
-  monitoring:
-    name: monitoring
-    external: true  
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    hostname: mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      - MP_MAX_MESSAGES=0
+      - MP_SMTP_AUTH_ACCEPT_ANY=true
+      - MP_SMTP_AUTH_ALLOW_INSECURE=true

@@ -60,20 +60,11 @@ builder.Host.UseOrleans((ctx,siloBuilder) =>
             options.ClusterId = Constants.ClusterId;
             options.ServiceId = Constants.ServiceId;
         });
-        if (Environment.GetEnvironmentVariable("is_compose") == "true")
-        { 
-            siloBuilder.ConfigureEndpoints(Dns.GetHostAddresses("email-service-processor")[0], // for demo this is "secure enough"
-            11111, 
-            30000, 
-            listenOnAnyHostAddress: true);
-        }
-        else
-        {
-            siloBuilder.ConfigureEndpoints(Dns.GetHostName(), // for demo this is "secure enough"
-            11111,
-            30000,
-            listenOnAnyHostAddress: true);
-        }
+
+        siloBuilder.ConfigureEndpoints(Dns.GetHostName(), // for demo this is "secure enough"
+        11111,
+        30000,
+        listenOnAnyHostAddress: true);
     }
 
     siloBuilder

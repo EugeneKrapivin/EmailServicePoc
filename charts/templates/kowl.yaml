@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.kafka.clusterName }}-kowl-config
+data:
+  KAFKA_BROKERS: "{{ .Values.kafka.clusterName }}-kafka-bootstrap:9092"
+  LOG_LEVEL: "info"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.kafka.clusterName }}-kowl
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: {{ .Values.kowl.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.kafka.clusterName }}-kowl
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.kafka.clusterName }}-kowl
+    spec:
+      containers:
+        - name: kowl
+          image: {{ .Values.kowl.repository }}:{{ .Values.kowl.tag }}
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.kafka.clusterName }}-kowl-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafka.clusterName }}-kowl
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: {{ .Values.kafka.clusterName }}-kowl

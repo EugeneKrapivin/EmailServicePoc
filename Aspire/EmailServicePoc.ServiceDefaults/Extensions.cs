@@ -109,15 +109,23 @@ public static class Extensions
                 {
                     opts.Endpoint = new Uri(otelEndpoint);
                     opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+
+                    opts.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
+                    opts.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
+                    opts.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+                    opts.BatchExportProcessorOptions.MaxQueueSize = 2048;
+                    opts.BatchExportProcessorOptions.MaxExportBatchSize = 512;
                 }));
 
         otel.WithMetrics(metrics =>
-            metrics.AddOtlpExporter("default", (opts, reader) =>
+            metrics
+            .SetExemplarFilter(ExemplarFilterType.TraceBased)
+            .AddOtlpExporter("default", (opts, reader) =>
             {
                 opts.Endpoint = new Uri(otelEndpoint);
                 opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-
-                reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10;
+                reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = (int)TimeSpan.FromSeconds(1).TotalMilliseconds;
+                reader.PeriodicExportingMetricReaderOptions.ExportTimeoutMilliseconds = (int)TimeSpan.FromSeconds(1).TotalMilliseconds;
             }));
 
         otel.WithTracing(tracing => tracing
@@ -125,6 +133,12 @@ public static class Extensions
             {
                 opts.Endpoint = new Uri(otelEndpoint);
                 opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                
+                opts.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
+                opts.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
+                opts.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+                opts.BatchExportProcessorOptions.MaxQueueSize = 2048;
+                opts.BatchExportProcessorOptions.MaxExportBatchSize = 512;
             }));
 
         return builder;

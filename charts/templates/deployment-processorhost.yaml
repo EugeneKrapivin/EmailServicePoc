@@ -76,7 +76,9 @@ spec:
             - name: Logging__LogLevel__Default
               value: Information
             - name: Logging__LogLevel__Microsoft.AspNetCore
-              value:  Information
+              value:  Warning
+            - name: Logging__LogLevel__Orleans
+              value:  Warning
             - name: Logging__LogLevel__Microsoft.AspNetCore.Hosting.Diagnostics
               value:  Warning
             - name: Logging__LogLevel__Microsoft.AspNetCore.Routing

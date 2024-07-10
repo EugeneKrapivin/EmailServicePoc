@@ -28,18 +28,23 @@ kafka:
   clusterName: email-svc-poc-kfk
   version: "3.5.2"
   replicas: 3
-
-env:
-  otelExporterOtlpEndpoint: http://localhost:4317
-  otelResourceAttributes: deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
-
-topics:
+  topics:
   - name: outbox
     partitions: 30
     replicas: 2
   - name: template-render
     partitions: 30
     replicas: 2
+
+kowl:
+  replicaCount: 1
+  repository: kwolrepo
+  tag: latest
+  pullPolicy: IfNotPresent  
+
+env:
+  otelExporterOtlpEndpoint: http://localhost:4317
+  otelResourceAttributes: deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
 
 ingress:
   enabled: true
