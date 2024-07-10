@@ -23,7 +23,7 @@ public record struct SendResult(bool Success, string Reason);
 
 // note that the SmtpClient is not thread safe (we shouldn't be using reentrant here)
 [StatelessWorker]
-public class SmtpSenderService : Grain, ISmptSenderService, IDisposable
+public class SmtpSenderService : Grain, ISmptSenderService
 {
     private bool _disposedValue;
     private SmtpClient _client = default!; // I'm naughty like this
@@ -246,28 +246,11 @@ public class SmtpSenderService : Grain, ISmptSenderService, IDisposable
     public override async Task OnDeactivateAsync(DeactivationReason reason, CancellationToken cancellationToken)
     {
         if (_client is not null)
+        {
             await _client.DisconnectAsync(true, cancellationToken);
+            _client = null!;
+        }
         
         await base.OnDeactivateAsync(reason, cancellationToken);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                _logger.LogWarning("disposing of connection");
-                _client?.Dispose();
-            }
-            _disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

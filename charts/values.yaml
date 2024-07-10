@@ -2,7 +2,7 @@ repository : REQUIRED
 host: example.com
 
 emailServiceApi:
-  replicaCount: 3
+  replicaCount: 2
   repository: emailservice
   image: 
   tag: latest
@@ -10,7 +10,7 @@ emailServiceApi:
   otelServiceName: email-service-api
 
 processorService:
-  replicaCount: 6
+  replicaCount: 3
   repository: processorhost
   tag: latest
   pullPolicy: IfNotPresent
@@ -19,7 +19,7 @@ processorService:
   serviceId: email-processor-poc
 
 mailpit:
-  replicaCount: 4
+  replicaCount: 2
   repository: mailpit
   tag: latest
   pullPolicy: IfNotPresent

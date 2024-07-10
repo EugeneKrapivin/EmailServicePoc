@@ -63,8 +63,8 @@ spec:
             httpGet:
               path: /alive
               port: 8080
-            failureThreshold: 1
-            periodSeconds: 10
+            failureThreshold: 3
+            periodSeconds: 30
           
           startupProbe:
             httpGet:

@@ -37,8 +37,8 @@ spec:
             httpGet:
               path: /livez
               port: 8025
-            failureThreshold: 1
-            periodSeconds: 10
+            failureThreshold: 3
+            periodSeconds: 30
           
           readinessProbe:
             httpGet:
