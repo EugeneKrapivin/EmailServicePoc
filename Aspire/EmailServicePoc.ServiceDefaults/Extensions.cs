@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -105,16 +106,18 @@ public static class Extensions
 
         builder.Logging.AddOpenTelemetry(logging =>
             logging
-                .AddOtlpExporter(opts =>
+                .AddOtlpExporter((exporterOptions, processorOptions) =>
                 {
-                    opts.Endpoint = new Uri(otelEndpoint);
-                    opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-
-                    opts.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
-                    opts.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
-                    opts.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
-                    opts.BatchExportProcessorOptions.MaxQueueSize = 2048;
-                    opts.BatchExportProcessorOptions.MaxExportBatchSize = 512;
+                    exporterOptions.Endpoint = new Uri(otelEndpoint);
+                    exporterOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
+                    exporterOptions.ExportProcessorType = ExportProcessorType.Batch;
+                    
+                    
+                    processorOptions.ExportProcessorType = ExportProcessorType.Batch;
+                    processorOptions.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
+                    processorOptions.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+                    processorOptions.BatchExportProcessorOptions.MaxQueueSize = 2048;
+                    processorOptions.BatchExportProcessorOptions.MaxExportBatchSize = 512;
                 }));
 
         otel.WithMetrics(metrics =>
@@ -124,17 +127,19 @@ public static class Extensions
             {
                 opts.Endpoint = new Uri(otelEndpoint);
                 opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-                reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = (int)TimeSpan.FromSeconds(1).TotalMilliseconds;
-                reader.PeriodicExportingMetricReaderOptions.ExportTimeoutMilliseconds = (int)TimeSpan.FromSeconds(1).TotalMilliseconds;
+
+                reader.TemporalityPreference = MetricReaderTemporalityPreference.Cumulative;
+                reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
+                reader.PeriodicExportingMetricReaderOptions.ExportTimeoutMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
             }));
 
         otel.WithTracing(tracing => tracing
-            .AddOtlpExporter("default", opts =>
+            .AddOtlpExporter("default", (opts) =>
             {
                 opts.Endpoint = new Uri(otelEndpoint);
                 opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                 
-                opts.ExportProcessorType = OpenTelemetry.ExportProcessorType.Batch;
+                opts.ExportProcessorType = ExportProcessorType.Batch;
                 opts.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
                 opts.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
                 opts.BatchExportProcessorOptions.MaxQueueSize = 2048;

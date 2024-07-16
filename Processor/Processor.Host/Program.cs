@@ -112,6 +112,7 @@ builder.Host.UseOrleans((ctx,siloBuilder) =>
 builder.Services.AddKafkaFlowHostedService(kafka =>
 {
     var config = builder.Configuration.GetRequiredSection("Kafka").Get<KafkaConfig>();
+    ArgumentNullException.ThrowIfNull(config, nameof(config));
 
     kafka
         .UseMicrosoftLog()

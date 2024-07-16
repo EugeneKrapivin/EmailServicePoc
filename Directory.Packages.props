@@ -10,7 +10,7 @@
     <PackageVersion Include="Aspire.Hosting.Azure" Version="8.0.0-preview.4.24156.9" />
     <PackageVersion Include="Aspire.Hosting.Orleans" Version="8.0.0-preview.5.24201.12" />-->
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="8.0.1" />
-    <PackageVersion Include="Fluid.Core" Version="2.10.0" />
+    <PackageVersion Include="Fluid.Core" Version="2.11.0" />
     <PackageVersion Include="KafkaFlow" Version="3.0.9" />
     <PackageVersion Include="KafkaFlow.Admin" Version="3.0.9" />
     <PackageVersion Include="KafkaFlow.Admin.Dashboard" Version="3.0.9" />
@@ -20,29 +20,30 @@
     <PackageVersion Include="KafkaFlow.Microsoft.DependencyInjection" Version="3.0.9" />
     <PackageVersion Include="KafkaFlow.OpenTelemetry" Version="3.0.9" />
     <PackageVersion Include="KafkaFlow.Serializer.JsonCore" Version="3.0.9" />
-    <PackageVersion Include="MailKit" Version="4.7.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0-preview.5.24306.11" />
-    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0-preview.5.24306.11" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0-preview.5.24306.7" />
-    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0-preview.5.24311.7" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0-preview.5.24306.7" />
+    <PackageVersion Include="MailKit" Version="4.7.1.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0-preview.6.24328.4" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.0-preview.6.24328.4" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="9.0.0-preview.6.24327.7" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0-preview.6.24353.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0-preview.6.24327.7" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.2" />
-    <PackageVersion Include="Microsoft.Orleans.Client" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Clustering.AzureStorage" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Clustering.Redis" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Core.Abstractions" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.GrainDirectory.AzureStorage" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.GrainDirectory.Redis" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Hosting.Kubernetes" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.AzureStorage" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Reminders" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Reminders.AzureStorage" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Reminders.Redis" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Serialization.SystemTextJson" Version="8.2.0-preview1" />
-    <PackageVersion Include="Microsoft.Orleans.Server" Version="8.2.0-preview1" />
+    <PackageVersion Include="Microsoft.Orleans.Client" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Clustering.AzureStorage" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Clustering.Redis" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Core.Abstractions" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.GrainDirectory.AzureStorage" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.GrainDirectory.Redis" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Hosting.Kubernetes" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.AzureStorage" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Persistence.Redis" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Reminders" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Reminders.AzureStorage" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Reminders.Redis" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Runtime" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Sdk" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Serialization.SystemTextJson" Version="8.2.0" />
+    <PackageVersion Include="Microsoft.Orleans.Server" Version="8.2.0" />
+    <PackageVersion Include="OpenTelemetry.Api" Version="1.9.0" />
     <PackageVersion Include="OpenTelemetry.Resources.Azure" Version="1.0.0-beta.8" />
     <PackageVersion Include="OpenTelemetry.Resources.Container" Version="1.0.0-beta.9" />
     <PackageVersion Include="OpenTelemetry.Resources.Host" Version="0.1.0-beta.2" />

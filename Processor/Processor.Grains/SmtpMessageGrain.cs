@@ -119,7 +119,7 @@ public class SmtpMessageGrain : Grain, IMessageGrain, IRemindable
         await this.RegisterOrUpdateReminder(reviveReminder, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
         var target = this.GetPrimaryKeyString();
 
-        _timer = RegisterTimer(async _ =>
+        _timer = this.RegisterGrainTimer(async () =>
         {
             var r = await _client
                 .GetGrain<IMessageGrain>(target)
@@ -133,7 +133,7 @@ public class SmtpMessageGrain : Grain, IMessageGrain, IRemindable
 
             _state.State.Attempt++;
             await _state.WriteStateAsync();
-        }, null, retryAfter, retryAfter);
+        }, new() {DueTime = retryAfter, Period = retryAfter, Interleave = false, KeepAlive = true});
     }
 
     private async Task Cleanup()

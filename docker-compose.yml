@@ -83,8 +83,7 @@ services:
     container_name: mailpit
     hostname: mailpit
     ports:
-      - "8025:8025"
-      - "1025:1025"
+      - "8025:7025"
     environment:
       - MP_MAX_MESSAGES=0
       - MP_SMTP_AUTH_ACCEPT_ANY=true

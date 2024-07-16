@@ -25,7 +25,6 @@ public record struct SendResult(bool Success, string Reason);
 [StatelessWorker]
 public class SmtpSenderService : Grain, ISmptSenderService
 {
-    private bool _disposedValue;
     private SmtpClient _client = default!; // I'm naughty like this
     private readonly ILogger<SmtpSenderService> _logger;
 
@@ -83,14 +82,14 @@ public class SmtpSenderService : Grain, ISmptSenderService
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed NoOp {server}:{port}", config.ServerUrl, config.ServerPort);
-                reconnect = true;
+                reconnect = true && ex is not SmtpCommandException;
             }
 
             if (!_client.IsConnected || reconnect)
             {
                 _logger.LogWarning("Reconnecting to {server}:{port}", config.ServerUrl, config.ServerPort);
                 var startConnect = Stopwatch.GetTimestamp();
-                
+
                 await _client.ConnectAsync(config.ServerUrl, int.Parse(config.ServerPort), false, cts.Token);
                 
                 await _client.AuthenticateAsync(config.UserName, config.Password, cts.Token);
