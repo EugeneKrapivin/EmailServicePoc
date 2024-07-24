@@ -206,6 +206,8 @@ or you could use a simple [`Grafana K6`](https://k6.io/) script to do the same.
 
 #### Examples
 
+Please use the `Load.CreateConfigurations` and `Load.SendEmails` projects to setup and load your installation.
+
 ## Architecture and design
 
 ![Design diagram](Assets/email%20service%20structure.drawio.svg)
