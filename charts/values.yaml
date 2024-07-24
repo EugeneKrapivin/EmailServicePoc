@@ -49,7 +49,7 @@ env:
 ingress:
   enabled: true
   hosts:
-    - emailservice.gigya.net
-    - processorhost.gigya.net
+    - emailservice
+    - processorhost
   annotations:
     sslCertificate: REQUIRED
