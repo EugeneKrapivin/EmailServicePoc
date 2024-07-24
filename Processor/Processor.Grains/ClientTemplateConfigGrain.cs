@@ -31,6 +31,14 @@ public class ClientTemplateConfigGrain : Grain, IClientTemplateConfigGrain
         _templateSizeHist = _meter.CreateHistogram<long>("template_size", "byte", "size of the template");
     }
 
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
+    {
+        await _state.ReadStateAsync();
+        _logger.LogInformation("reading templates state");
+
+        await base.OnActivateAsync(cancellationToken);
+    }
+
     public ValueTask<Dictionary<string, LocaleCollection>> GetAllTemplates()
     {
         return ValueTask.FromResult(_state.State.Locales);

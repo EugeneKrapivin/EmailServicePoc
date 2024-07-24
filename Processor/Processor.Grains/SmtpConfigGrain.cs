@@ -1,5 +1,7 @@
 ﻿using EmailService.Models;
 
+using Microsoft.Extensions.Logging;
+
 using Orleans.Runtime;
 
 using Processor.Grains.Interfaces;
@@ -17,17 +19,24 @@ public record class Smtp(
 public class SmtpConfigGrain : Grain, ISmtpConfigGrain
 {
     private readonly IPersistentState<Smtp> _state;
+    private readonly ILogger<SmtpConfigGrain> _logger;
+
     private Smtp State => _state.State;
 
     public SmtpConfigGrain(
-        [PersistentState(stateName: "SmtpConfig", storageName: "smtp-config-storage")] IPersistentState<Smtp> state)
+        [PersistentState(stateName: "SmtpConfig", storageName: "smtp-config-storage")] IPersistentState<Smtp> state,
+        ILogger<SmtpConfigGrain> logger)
     {
         _state = state;
+        _logger = logger;
     }
 
-    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        return base.OnActivateAsync(cancellationToken);
+        _logger.LogInformation("getting smtp config");
+        await _state.ReadStateAsync();
+        
+        await base.OnActivateAsync(cancellationToken);
     }
 
     public ValueTask<SmtpConfig?> GetConfig() => _state.RecordExists

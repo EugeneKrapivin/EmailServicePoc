@@ -8,14 +8,17 @@ services:
       context: .
       dockerfile: Api/EmailService/Dockerfile
     ports:
-      - "8080"
-      - "8081"
+      - "18080:8080"
+      - "18081:8081"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTEL_SERVICE_NAME=EmailService_API
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
-      - Kafka__Bootstrap=broker:9092
-      - Azure__AzureStorageConnectionString:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1; 
+      - Kafka__Bootstrap__0=broker:9092
+      - Azure__AzureStorageConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
 
   processor.host:
     image: ${DOCKER_REGISTRY-}processorhost
@@ -23,15 +26,18 @@ services:
       context: .
       dockerfile: Processor/Processor.Host/Dockerfile
     ports:
-      - "8080"
-      - "8081"
+      - "19080:8080"
+      - "19081:8081"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:18889
       - OTEL_SERVICE_NAME=EmailService_Host
       - OTEL_RESOURCE_ATTRIBUTES=deployment.environment=development,service.namespace=EmailServicePoc,service.version=1.0.0.0-beta01
       - is_compose=true
-      - Kafka__Bootstrap=broker:9092
-      - Azure__AzureStorageConnectionString:DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1; 
+      - Kafka__Bootstrap__0=broker:9092
+      - Azure__AzureStorageConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10001/devstoreaccount1;QueueEndpoint=http://azurite:10002/devstoreaccount1;TableEndpoint=http://azurite:10003/devstoreaccount1; 
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
   
   broker:
     image: confluentinc/cp-server:7.5.0
@@ -44,10 +50,7 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:29092,PLAINTEXT_HOST://broker:9092'
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:29093'
       KAFKA_LISTENERS: 'PLAINTEXT://broker:29092,CONTROLLER://broker:29093,PLAINTEXT_HOST://broker:9092'
@@ -55,7 +58,16 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
       CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
-  
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CLUSTER_LINK_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_CLUSTER_LINK_METADATA_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_DURABILITY_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_TIER_METADATA_REPLICATION_FACTOR: 1
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      
   aspire-dashboard:
     image: mcr.microsoft.com/dotnet/aspire-dashboard:8.0.0
     container_name: aspire-dashboard
@@ -83,7 +95,7 @@ services:
     container_name: mailpit
     hostname: mailpit
     ports:
-      - "8025:7025"
+      - "8025:8025"
     environment:
       - MP_MAX_MESSAGES=0
       - MP_SMTP_AUTH_ACCEPT_ANY=true

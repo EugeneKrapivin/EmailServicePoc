@@ -70,7 +70,7 @@ public static class Extensions
                     // We want to view all traces in development
                     tracing.SetSampler(new AlwaysOnSampler());
                 }
-                
+
                 AppContext.SetSwitch("Azure.Experimental.EnableActivitySource", true);
 
                 tracing
@@ -111,8 +111,8 @@ public static class Extensions
                     exporterOptions.Endpoint = new Uri(otelEndpoint);
                     exporterOptions.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
                     exporterOptions.ExportProcessorType = ExportProcessorType.Batch;
-                    
-                    
+
+
                     processorOptions.ExportProcessorType = ExportProcessorType.Batch;
                     processorOptions.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
                     processorOptions.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
@@ -138,7 +138,7 @@ public static class Extensions
             {
                 opts.Endpoint = new Uri(otelEndpoint);
                 opts.Protocol = OpenTelemetry.Exporter.OtlpExportProtocol.Grpc;
-                
+
                 opts.ExportProcessorType = ExportProcessorType.Batch;
                 opts.BatchExportProcessorOptions.ScheduledDelayMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
                 opts.BatchExportProcessorOptions.ExporterTimeoutMilliseconds = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
@@ -154,8 +154,10 @@ public static class Extensions
         public Resource Detect()
         {
             var resource = ResourceBuilder.CreateDefault()
-                .AddService(Assembly.GetEntryAssembly()?.GetName().Name ?? "unknown")
-                .AddAttributes([new("version", GetVersion())]);
+                .AddAttributes([
+                    new("version", GetVersion()),
+                    new("serviceName", Assembly.GetEntryAssembly()?.GetName().Name ?? "unknown")
+                ]);
 
             return resource.Build();
         }

@@ -58,6 +58,7 @@ builder.Services.AddKafka(kafka =>
     var config = builder.Configuration
         .GetRequiredSection("Kafka")
         .Get<KafkaConfig>();
+
     ArgumentNullException.ThrowIfNull(config, nameof(config));
 
     kafka

@@ -26,8 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
-		LICENSE.txt = LICENSE.txt
 		docker-cd.ps1 = docker-cd.ps1
+		LICENSE.txt = LICENSE.txt
 		nuget.config = nuget.config
 		README.md = README.md
 	EndProjectSection
@@ -50,12 +50,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{
 		charts\templates\ingress.yaml = charts\templates\ingress.yaml
 		charts\templates\kafka-cluster.yaml = charts\templates\kafka-cluster.yaml
 		charts\templates\kafka-topics.yaml = charts\templates\kafka-topics.yaml
-		charts\templates\mailpit.yaml = charts\templates\mailpit.yaml
 		charts\templates\kowl.yaml = charts\templates\kowl.yaml
+		charts\templates\mailpit.yaml = charts\templates\mailpit.yaml
 		charts\templates\service-emailservice.yaml = charts\templates\service-emailservice.yaml
 		charts\templates\service-processorhost.yaml = charts\templates\service-processorhost.yaml
 		charts\templates\_helpers.tpl = charts\templates\_helpers.tpl
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Load.CreateConfigurations", "Load\Load.CreateConfigurations\Load.CreateConfigurations.csproj", "{FE972908-E084-4F38-AEE3-38CF041FB5F0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Load", "Load", "{B713B31C-CE56-4D08-B350-5592AD32BC6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Load.SendEmails", "Load\Load.SendEmails\Load.SendEmails.csproj", "{0849FC3F-C883-4046-9A16-295A84AB9432}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +97,14 @@ Global
 		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ADCE2DD-BB25-4962-A5C7-D0629BF24D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE972908-E084-4F38-AEE3-38CF041FB5F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE972908-E084-4F38-AEE3-38CF041FB5F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE972908-E084-4F38-AEE3-38CF041FB5F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE972908-E084-4F38-AEE3-38CF041FB5F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0849FC3F-C883-4046-9A16-295A84AB9432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0849FC3F-C883-4046-9A16-295A84AB9432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0849FC3F-C883-4046-9A16-295A84AB9432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0849FC3F-C883-4046-9A16-295A84AB9432}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +116,8 @@ Global
 		{D962BB60-F43D-4D0D-9F27-9507145A4882} = {AB619B99-671C-4CFD-823D-618418223221}
 		{C582280E-78B2-4A87-A3FA-455E8EE7C270} = {55C807EA-9B82-48C8-9A2B-60A176D25901}
 		{D933EF50-D471-432A-9A67-581D60C9FC7B} = {05EB696B-9592-4961-80A3-2125DEC8BF48}
+		{FE972908-E084-4F38-AEE3-38CF041FB5F0} = {B713B31C-CE56-4D08-B350-5592AD32BC6D}
+		{0849FC3F-C883-4046-9A16-295A84AB9432} = {B713B31C-CE56-4D08-B350-5592AD32BC6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {106683E3-F719-41C1-8C23-328FB8677D70}

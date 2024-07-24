@@ -67,9 +67,12 @@ public class SmtpMessageGrain : Grain, IMessageGrain, IRemindable
         _logger = logger;
         _timer = null!;
     }
-    public override Task OnActivateAsync(CancellationToken cancellationToken)
+    public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        return base.OnActivateAsync(cancellationToken);
+        _logger.LogInformation("reading scheduled message state");
+        await _state.ReadStateAsync();
+        
+        await base.OnActivateAsync(cancellationToken);
     }
 
     private const string retryReminder = "next_attempt";

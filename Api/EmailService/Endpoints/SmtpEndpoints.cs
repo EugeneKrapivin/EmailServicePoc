@@ -126,45 +126,6 @@ public static class SmtpEndpoints
             .WithName("update-client-smtp-config")
             .WithOpenApi();
 
-        // this will probably not work since SmtpConfig is a record
-        smtpEndpoints
-            .MapPatch("/", async (
-                [FromRoute] string clientId,
-                [FromBody] JsonPatchDocument<SmtpConfig> patchDoc,
-                [FromServices] ILogger<WebApplication> logger,
-                [FromServices] IClusterClient clusterClient) =>
-            {
-                // TODO: validate input
-
-                var configGrain = clusterClient.GetGrain<ISmtpConfigGrain>(clientId);
-
-                var existingConfig = await configGrain.GetConfig();
-                if (existingConfig is null)
-                {
-                    logger.LogWarning("smtp configuration for {clientId} not found.", clientId);
-                    return Results.NotFound();
-                }
-
-                patchDoc.ApplyTo(existingConfig);
-
-                await configGrain.SetConfig(existingConfig);
-
-                return TypedResults.Ok(
-                   new ClientStmpConfigResponse
-                   (
-                       From: existingConfig.From,
-                       FromName: existingConfig.FromName,
-                       UserName: existingConfig.UserName,
-                       Password: "***",
-                       ServerPort: existingConfig.ServerPort,
-                       ServerUrl: existingConfig.ServerUrl
-                   ));
-            })
-            .Produces<ClientStmpConfigResponse>(200, "application/json")
-            .Produces<NotFound>(404, "application/json")
-            .WithName("patch-client-smtp-config")
-            .WithOpenApi();
-
         return app;
     }
 }

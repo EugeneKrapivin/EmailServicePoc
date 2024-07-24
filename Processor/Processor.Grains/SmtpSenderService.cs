@@ -47,6 +47,8 @@ public class SmtpSenderService : Grain, ISmptSenderService
         _connectClientHistogram = _meter.CreateHistogram<double>("smtp_connect_client", "ms");
         _sendMessageHistogram = _meter.CreateHistogram<double>("smtp_send", "ms");
         _exceptionsCounter = _meter.CreateCounter<long>("smtp_exception_count", "exception");
+        
+        _logger.LogInformation("creating new a sender service");
     }
 
     public async Task<SendResult> SendMessage(SmtpConfig config, EmailRequest emailRequest)
@@ -56,6 +58,8 @@ public class SmtpSenderService : Grain, ISmptSenderService
         {
             if (_client is null)
             {                
+                _logger.LogInformation("creating a new smtp client");
+
                 var startCreate = Stopwatch.GetTimestamp();
                
                 _client = new SmtpClient();

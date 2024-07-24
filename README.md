@@ -204,6 +204,8 @@ public class Shop
 
 or you could use a simple [`Grafana K6`](https://k6.io/) script to do the same.
 
+#### Examples
+
 ## Architecture and design
 
 ![Design diagram](Assets/email%20service%20structure.drawio.svg)
