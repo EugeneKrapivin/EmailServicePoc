@@ -38,7 +38,19 @@ public static class Extensions
             http.AddServiceDiscovery();
         });
 
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(opts =>
+        {
+            opts.AddDocumentTransformer((doc, ctx, ct) =>
+            {
+                doc.Servers.Clear();
+                doc.Servers.Add(new OpenApi.Models.OpenApiServer()
+                {
+                    Url = "/",
+                });
+
+                return Task.CompletedTask;
+            });
+        });
 
         return builder;
     }
@@ -131,7 +143,8 @@ public static class Extensions
                 reader.TemporalityPreference = MetricReaderTemporalityPreference.Cumulative;
                 reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
                 reader.PeriodicExportingMetricReaderOptions.ExportTimeoutMilliseconds = (int)TimeSpan.FromSeconds(5).TotalMilliseconds;
-            }));
+            })
+            .AddPrometheusExporter());
 
         otel.WithTracing(tracing => tracing
             .AddOtlpExporter("default", (opts) =>
@@ -184,6 +197,7 @@ public static class Extensions
         }
 
         app.MapOpenApi();
+        app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.MapHealthChecks("/health");
         app.MapHealthChecks("/alive", new()
         {

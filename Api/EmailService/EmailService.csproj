@@ -4,7 +4,7 @@
 		<OutputType>Exe</OutputType>
 		<UserSecretsId>689edab3-c785-442b-991a-0bacda24a192</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>..\..</DockerfileContext>
+		<DockerfileContext>..\</DockerfileContext>
 		<DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 

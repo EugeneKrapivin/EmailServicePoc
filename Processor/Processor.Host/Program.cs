@@ -158,7 +158,7 @@ builder.Services
         .AddSource("Azure.*")
         .AddSource("MailKit.Net.SmtpClient"))
     .WithMetrics(metrics => metrics
-        //.AddMeter("SMTPSender")
+        .AddMeter("SMTPSender")
         .AddMeter("mailkit.net.smtp")
         .AddMeter("mailkit.net.socket")
         .AddMeter("Microsoft.Orleans")
